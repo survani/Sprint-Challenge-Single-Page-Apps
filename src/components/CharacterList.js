@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import SearchForm from './SearchForm';
+
 
 import CharacterCard from './CharacterCard';
 
@@ -7,6 +10,11 @@ export default function CharacterList() {
   // TODO: Add useState to track data from useEffect
   //adding useState! I decided to go with characters and setCharacter because it refrences what I am going to do in the SPA!
   const [characters, setCharacters] = useState([]);
+  const [dataIsFiltered, dataIsUpdated] = useState([])
+
+  const searching = allcharacters => {
+    dataIsUpdated(allcharacters)
+  }
 
   useEffect(() => {
     // TODO: Add API Request here - must run in `useEffect`
@@ -21,6 +29,8 @@ export default function CharacterList() {
         setCharacters(response.data.results)
         //Checked  a specific part of the data I wanted!
         console.log('response.data.results: ', response.data.results);
+
+        dataIsUpdated(response.data.results);
       })
 
       .catch(error => {
@@ -29,10 +39,13 @@ export default function CharacterList() {
   }, []);
 
   return (
-    <section className="character-list">
+    <section>
+      <Link className='links' to={'/'}>Home</Link>
+      <SearchForm searching={searching} character={characters}/>
       {/*Maps over all the data inside response.data.results so I can go over all the things... 
       I also chosed these three elements to show in the front-end*/}
-      {characters.map(character => (
+      {/*used dataIsFiltered to make the search work instead of characters*/}
+      {dataIsFiltered.map(character => (
         <CharacterCard
           key={character.id}
           name={character.name}
